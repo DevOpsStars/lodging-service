@@ -1,4 +1,20 @@
+version: '3'
+
 services:
+  app:
+    build:
+      context: .
+    container_name: lodging_service_app
+    depends_on:
+      - postgres
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/myuser
+      - SPRING_DATASOURCE_USERNAME=myuser
+      - SPRING_DATASOURCE_PASSWORD=secret
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - "4001:8080"
+
   postgres:
     image: postgres:latest
     container_name: lodging_service_postgresql
