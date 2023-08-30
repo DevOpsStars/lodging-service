@@ -30,15 +30,8 @@ public class LodgeService {
         return lodgeRepository.save(newLodge);
     }
 
-    public Lodge updateLodge(Integer id, NewLodgeDTO dto) {
-        Optional<Lodge> result = lodgeRepository.findById(id);
-        if(result.isPresent()){
-            Lodge lodge = result.get();
-            ModelMapper modelMapper = new ModelMapper();
-            modelMapper.map(dto, lodge);
-            lodgeRepository.save(lodge);
-        }
-        return null;
+    public Lodge updateLodge(Lodge updatedLodge) {
+        return lodgeRepository.save(updatedLodge);
     }
 
     public Boolean deleteLodge(Integer id) {

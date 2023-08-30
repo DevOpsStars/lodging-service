@@ -3,6 +3,7 @@ package com.devops.lodgingservice.controller;
 import com.devops.lodgingservice.dto.NewLodgeDTO;
 import com.devops.lodgingservice.model.Lodge;
 import com.devops.lodgingservice.service.LodgeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,15 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/api/lodge")
+@Slf4j
 public class LodgeController {
 
-    @Autowired
     private LodgeService lodgeService;
+
+    @Autowired
+    public LodgeController(LodgeService lodgeService){
+        this.lodgeService = lodgeService;
+    }
 
     @GetMapping()
     public ResponseEntity<List<Lodge>> getAll() {
@@ -39,13 +45,13 @@ public class LodgeController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @PutMapping("/{id}")
+    @PostMapping("/update/{id}")
     public ResponseEntity<Lodge> update(@PathVariable Integer id, @RequestBody NewLodgeDTO dto) {
-        Lodge result = lodgeService.updateLodge(id, dto);
-        if(result != null){
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Lodge lodge = new Lodge(dto);
+        lodge.setId(id);
+        Lodge result = lodgeService.updateLodge(lodge);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
