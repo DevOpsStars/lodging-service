@@ -47,7 +47,7 @@ public class LodgeController {
 
     @PostMapping("/update/{id}")
     public ResponseEntity<Lodge> update(@PathVariable Integer id, @RequestBody NewLodgeDTO dto) {
-        Lodge lodge = new Lodge(dto);
+        Lodge lodge = lodgeService.convertNewLodgeDTOToLodge(dto);
         lodge.setId(id);
         Lodge result = lodgeService.updateLodge(lodge);
 

@@ -43,6 +43,23 @@ public class LodgeService {
         return false;
     }
 
+    public Lodge convertNewLodgeDTOToLodge(NewLodgeDTO dto) {
+        Lodge lodge = new Lodge();
+        lodge.setTitle(dto.getTitle());
+        lodge.setBasePrice(dto.getBasePrice());
+        lodge.setPriceType(dto.getPriceType());
+        lodge.setCountry(dto.getCountry());
+        lodge.setCity(dto.getCity());
+        lodge.setAddress(dto.getAddress());
+        lodge.setMinGuests(dto.getMinGuests());
+        lodge.setMaxGuests(dto.getMaxGuests());
+        lodge.setHasKitchen(dto.getHasKitchen());
+        lodge.setHasWifi(dto.getHasWifi());
+        lodge.setHasAC(dto.getHasAC());
+        lodge.setHasFreeParking(dto.getHasFreeParking());
+        lodge.setHasBalcony(dto.getHasBalcony());
 
+        return lodge;
+    }
 
 }
