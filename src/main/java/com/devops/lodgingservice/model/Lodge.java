@@ -66,20 +66,4 @@ public class Lodge {
 
     @OneToMany(mappedBy = "lodge", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<PriceModification> priceModifications;
-
-    public Lodge(NewLodgeDTO dto){
-        this.title = dto.getTitle();
-        this.basePrice = dto.getBasePrice();
-        this.priceType = dto.getPriceType();
-        this.country = dto.getCountry();
-        this.city = dto.getCity();
-        this.address = dto.getAddress();
-        this.minGuests = dto.getMinGuests();
-        this.maxGuests = dto.getMaxGuests();
-        this.hasKitchen = dto.getHasKitchen();
-        this.hasWifi = dto.getHasWifi();
-        this.hasAC = dto.getHasAC();
-        this.hasFreeParking = dto.getHasFreeParking();
-        this.hasBalcony = dto.getHasBalcony();
-    }
 }

@@ -1,5 +1,6 @@
 package com.devops.lodgingservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +19,8 @@ public class Availability {
     @Column(name = "availability_id")
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     private Lodge lodge;
 
     @Column(name = "start_date")
