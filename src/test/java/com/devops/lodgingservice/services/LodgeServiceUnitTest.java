@@ -1,21 +1,14 @@
 package com.devops.lodgingservice.services;
 
-import com.devops.lodgingservice.dto.NewLodgeDTO;
 import com.devops.lodgingservice.model.Lodge;
-import com.devops.lodgingservice.model.PriceType;
 import com.devops.lodgingservice.repository.LodgeRepository;
 import com.devops.lodgingservice.service.LodgeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-
-import static org.assertj.core.api.BDDAssumptions.given;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import java.util.ArrayList;
