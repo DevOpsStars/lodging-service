@@ -31,14 +31,43 @@ public class AvailabilityService {
         return availabilityRepository.findById(id);
     }
 
+    public List<Availability> getAllByLodgeId(Integer lodgeId) {
+        return availabilityRepository.findAllByLodgeId(lodgeId);
+    }
+
     public Availability createNew(NewAvailabilityDTO dto) {
         LocalDate start = LocalDate.parse(dto.getStart());
         LocalDate end = LocalDate.parse(dto.getEnd());
         if(lodgeRepository.existsById(dto.getLodgeId()) && !isOverlapPresent(dto.getLodgeId(), start, end, 0)){
-            Availability newAvailability = convertNewAvailabilityDTOToAvailability(dto);
+            Availability newAvailability = newAvailabilityDTOToAvailability(dto);
             return availabilityRepository.save(newAvailability);
         }
         return null;
+    }
+
+    public Availability updateAvailability(Integer id, NewAvailabilityDTO dto) {
+        LocalDate start = LocalDate.parse(dto.getStart());
+        LocalDate end = LocalDate.parse(dto.getEnd());
+        if(availabilityRepository.existsById(id)
+                && lodgeRepository.existsById(dto.getLodgeId())
+                && !isOverlapPresent(dto.getLodgeId(), start, end, id)){
+
+            Availability availability = availabilityRepository.findById(id).get();
+            availability.setStartDate(start);
+            availability.setEndDate(end);
+
+            return availabilityRepository.save(availability);
+        }
+        return null;
+    }
+
+    public Boolean deleteAvailability(Integer id) {
+        Optional<Availability> result = availabilityRepository.findById(id);
+        if(result.isPresent()){
+            availabilityRepository.delete(result.get());
+            return true;
+        }
+        return false;
     }
 
     private Boolean isOverlapPresent(Integer lodgeId, LocalDate start, LocalDate end, Integer excluding){
@@ -57,41 +86,7 @@ public class AvailabilityService {
         }
         return false;
     }
-
-    public Availability updateAvailability(Integer id, NewAvailabilityDTO dto) {
-        LocalDate start = LocalDate.parse(dto.getStart());
-        LocalDate end = LocalDate.parse(dto.getEnd());
-        if(availabilityRepository.existsById(id)
-                && lodgeRepository.existsById(dto.getLodgeId())
-                && !isOverlapPresent(dto.getLodgeId(), start, end, id)){
-
-            Optional<Availability> optional = availabilityRepository.findById(id);
-            if(optional.isEmpty()){
-                return null;
-            }
-            Availability availability = optional.get();
-            availability.setStartDate(start);
-            availability.setEndDate(end);
-
-            return availabilityRepository.save(availability);
-        }
-        return null;
-    }
-
-    public Boolean deleteAvailability(Integer id) {
-        Optional<Availability> result = availabilityRepository.findById(id);
-        if(result.isPresent()){
-            availabilityRepository.delete(result.get());
-            return true;
-        }
-        return false;
-    }
-
-    public List<Availability> getAllByLodgeId(Integer lodgeId) {
-        return availabilityRepository.findAllByLodgeId(lodgeId);
-    }
-
-    public Availability convertNewAvailabilityDTOToAvailability(NewAvailabilityDTO dto) {
+    public Availability newAvailabilityDTOToAvailability(NewAvailabilityDTO dto) {
         LocalDate start = LocalDate.parse(dto.getStart());
         LocalDate end = LocalDate.parse(dto.getEnd());
         Availability availability = new Availability();
@@ -105,7 +100,7 @@ public class AvailabilityService {
         return availability;
     }
 
-    public AvailabilityDTO convertAvailabilityToAvailabilityDTO(Availability a) {
+    public AvailabilityDTO availabilityToAvailabilityDTO(Availability a) {
         AvailabilityDTO dto = new AvailabilityDTO();
         dto.setId(a.getId());
         dto.setStart(a.getStartDate());
