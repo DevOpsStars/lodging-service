@@ -21,6 +21,9 @@ public class PriceModification {
     @Column(name = "price_modification_id")
     private Integer id;
 
+    @Column(name = "title")
+    private String title;
+
     @Column(name = "start_date")
     private LocalDate startDate;
 

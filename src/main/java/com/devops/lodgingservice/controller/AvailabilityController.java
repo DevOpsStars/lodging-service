@@ -30,21 +30,21 @@ public class AvailabilityController {
     @GetMapping()
     public ResponseEntity<List<AvailabilityDTO>> getAll() {
         List<Availability> result = availabilityService.getAll();
-        List<AvailabilityDTO> dtos = result.stream().map(a -> availabilityService.convertAvailabilityToAvailabilityDTO(a)).toList();
+        List<AvailabilityDTO> dtos = result.stream().map(a -> availabilityService.availabilityToAvailabilityDTO(a)).toList();
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     @GetMapping("/lodge/{id}")
     public ResponseEntity<List<AvailabilityDTO>> getAllByLodgeId(@PathVariable Integer id) {
         List<Availability> result = availabilityService.getAllByLodgeId(id);
-        List<AvailabilityDTO> dtos = result.stream().map(a -> availabilityService.convertAvailabilityToAvailabilityDTO(a)).toList();
+        List<AvailabilityDTO> dtos = result.stream().map(a -> availabilityService.availabilityToAvailabilityDTO(a)).toList();
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AvailabilityDTO> getById(@PathVariable Integer id) {
         Optional<Availability> result = availabilityService.getById(id);
-        return result.map(lodge -> new ResponseEntity<>(availabilityService.convertAvailabilityToAvailabilityDTO(result.get()),
+        return result.map(lodge -> new ResponseEntity<>(availabilityService.availabilityToAvailabilityDTO(result.get()),
                 HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
@@ -52,11 +52,7 @@ public class AvailabilityController {
     public ResponseEntity<AvailabilityDTO> create(@RequestBody NewAvailabilityDTO newDto){
         Availability result = availabilityService.createNew(newDto);
         if(result != null){
-            AvailabilityDTO dto = new AvailabilityDTO();
-            dto.setId(result.getId());
-            dto.setStart(result.getStartDate());
-            dto.setEnd(result.getEndDate());
-            dto.setLodgeId(result.getLodge().getId());
+            AvailabilityDTO dto = availabilityService.availabilityToAvailabilityDTO(result);
             return new ResponseEntity<>(dto, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -66,7 +62,7 @@ public class AvailabilityController {
     public ResponseEntity<AvailabilityDTO> update(@PathVariable Integer id, @RequestBody NewAvailabilityDTO dto) {
         Availability result = availabilityService.updateAvailability(id, dto);
         if(result != null){
-            return new ResponseEntity<>(availabilityService.convertAvailabilityToAvailabilityDTO(result), HttpStatus.OK);
+            return new ResponseEntity<>(availabilityService.availabilityToAvailabilityDTO(result), HttpStatus.OK);
         }
        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
