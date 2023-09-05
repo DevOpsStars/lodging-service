@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @Data
 public class PhotoInfoDTO {
 
+    private Integer id;
+
     private String uuid;
 
     private String title;
@@ -22,6 +24,7 @@ public class PhotoInfoDTO {
     private long size;
 
     public PhotoInfoDTO(Photo photo) {
+        setId(photo.getId());
         setUuid(photo.getUuid());
         setTitle(photo.getTitle());
         setFileName(photo.getFileName());

@@ -5,6 +5,7 @@ import com.devops.lodgingservice.model.Photo;
 import com.devops.lodgingservice.repository.PhotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,8 +26,14 @@ public class PhotoService {
         return this.photoRepository.findByTitle(title);
     }
 
+    @Transactional
     public Optional<Photo> findByFileName(String fileName) {
         return this.photoRepository.findByFileName(fileName);
+    }
+
+    @Transactional
+    public Optional<Photo> findById(Integer id) {
+        return this.photoRepository.findById(id);
     }
 
     public Optional<Photo> findByUuid(String uuid) {
@@ -35,5 +42,18 @@ public class PhotoService {
 
     public List<PhotoInfoDTO> findAllPhotoDescriptions() {
         return photoRepository.findAllPhotoInfo();
+    }
+
+    public Boolean deletePhoto(Integer id) {
+        Optional<Photo> result = photoRepository.findById(id);
+        if(result.isPresent()){
+            photoRepository.delete(result.get());
+            return true;
+        }
+        return false;
+    }
+
+    public List<Photo> findByLodgeId(Integer lodgeId) {
+        return photoRepository.findByLodgeId(lodgeId);
     }
 }

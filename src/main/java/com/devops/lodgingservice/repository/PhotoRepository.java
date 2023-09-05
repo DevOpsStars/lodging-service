@@ -17,7 +17,9 @@ public interface PhotoRepository extends JpaRepository<Photo, Integer> {
 
     Optional<Photo> findByFileName(String fileName);
 
-    @Query(value = "select new com.devops.lodgingservice.dto.PhotoInfoDTO(p.uuid, p.title, p.fileName, p.fileType, p.size) from com.devops.lodgingservice.model.Photo p", nativeQuery = false)
+    List<Photo> findByLodgeId(Integer lodgeId);
+
+    @Query(value = "select new com.devops.lodgingservice.dto.PhotoInfoDTO(p.id, p.uuid, p.title, p.fileName, p.fileType, p.size) from com.devops.lodgingservice.model.Photo p", nativeQuery = false)
     List<PhotoInfoDTO> findAllPhotoInfo();
 
 
