@@ -17,6 +17,8 @@ public class PhotoInfoDTO {
 
     private String title;
 
+    private Integer lodgeId;
+
     private String fileName;
 
     private String fileType;
@@ -27,6 +29,7 @@ public class PhotoInfoDTO {
         setId(photo.getId());
         setUuid(photo.getUuid());
         setTitle(photo.getTitle());
+        setLodgeId(photo.getLodge().getId());
         setFileName(photo.getFileName());
         setFileType(photo.getFileType());
         setSize(photo.getSize());

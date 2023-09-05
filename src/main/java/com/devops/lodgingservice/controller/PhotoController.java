@@ -45,20 +45,20 @@ public class PhotoController {
 
     @GetMapping("/lodge/{lodgeId}")
     public ResponseEntity<List<PhotoInfoDTO>> getPhotoInfosByLodge(@PathVariable Integer lodgeId){
-        List<Photo> result = photoService.findByLodgeId(lodgeId);
-        List<PhotoInfoDTO> infos = new ArrayList<>();
-        for (Photo photo: result){
-            infos.add(new PhotoInfoDTO(photo));
-        }
+        List<PhotoInfoDTO> infos = photoService.findByLodgeId(lodgeId);
         return new ResponseEntity<>(infos, HttpStatus.OK);
     }
 
-    @PostMapping()
-    public ResponseEntity<PhotoInfoDTO> uploadSinglePhotoo(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/{lodgeId}/{title}")
+    public ResponseEntity<PhotoInfoDTO> uploadSinglePhotoo(@PathVariable Integer lodgeId, @PathVariable String title,
+                                                           @RequestParam("file") MultipartFile file) {
         try{
             Photo photo = Photo.buildImage(file, imageUtils);
-            photoService.savePhoto(photo);
-            return new ResponseEntity<>(new PhotoInfoDTO(photo), HttpStatus.OK);
+            Photo saved = photoService.savePhoto(photo, lodgeId, title);
+            if(saved != null){
+                return new ResponseEntity<>(new PhotoInfoDTO(photo), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }catch(Exception e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -73,20 +73,15 @@ public class PhotoController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/uploads")
-    public ResponseEntity<List<PhotoInfoDTO>> uploadMultiFiles(@RequestParam("files") MultipartFile[] files) throws Exception {
-        List<PhotoInfoDTO> results = new ArrayList<>();
-        for(MultipartFile file : files){
-            Photo photo = Photo.buildImage(file, imageUtils);
-            photoService.savePhoto(photo);
-            results.add(new PhotoInfoDTO(photo));
-        }
-        return new ResponseEntity<>(results, HttpStatus.OK);
-    }
-
     @GetMapping("/show/{fileName}")
     public ResponseEntity<byte[]> getPhoto(@PathVariable String fileName) throws Exception {
         Photo photo = getPhotoByName(fileName);
+        return ResponseEntity.ok().contentType(MediaType.valueOf(photo.getFileType())).body(photo.getData());
+    }
+
+    @GetMapping("/show/id/{id}")
+    public ResponseEntity<byte[]> getPhoto(@PathVariable Integer id) throws Exception {
+        Photo photo = getPhotoById(id);
         return ResponseEntity.ok().contentType(MediaType.valueOf(photo.getFileType())).body(photo.getData());
     }
 
@@ -96,7 +91,33 @@ public class PhotoController {
         Photo photo = getPhotoByName(fileName, width, height);
         return ResponseEntity.ok().contentType(MediaType.valueOf(photo.getFileType())).body(photo.getData());
     }
-    
+
+    @GetMapping("/show/id/{width}/{height}/{id}")
+    public ResponseEntity<byte[]> getScaledImage(@PathVariable int width, @PathVariable int height,
+                                                 @PathVariable Integer id) throws Exception {
+        Photo photo = getPhotoById(id, width, height);
+        return ResponseEntity.ok().contentType(MediaType.valueOf(photo.getFileType())).body(photo.getData());
+    }
+    public Photo getPhotoById(Integer id) throws Exception {
+        Optional<Photo> optionalPhoto = photoService.findById(id);
+        if(optionalPhoto.isEmpty()){
+            return Photo.defaultImage();
+        }
+        return optionalPhoto.get();
+    }
+
+    public Photo getPhotoById(Integer id, int width, int height) throws Exception {
+        Optional<Photo> optionalPhoto = photoService.findById(id);
+        if(optionalPhoto.isEmpty()){
+            Photo defaultPhoto = Photo.defaultImage();
+            defaultPhoto.scale(width, height);
+            return defaultPhoto;
+        }
+        Photo photo = optionalPhoto.get();
+        photo.scale(width, height);
+        return photo;
+    }
+
     public Photo getPhotoByName(String name) throws Exception {
         Optional<Photo> optionalPhoto = photoService.findByFileName(name);
         if(optionalPhoto.isEmpty()){
