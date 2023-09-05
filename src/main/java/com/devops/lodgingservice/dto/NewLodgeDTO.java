@@ -1,7 +1,6 @@
 package com.devops.lodgingservice.dto;
 
 import com.devops.lodgingservice.model.PriceType;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +11,12 @@ import lombok.NoArgsConstructor;
 public class NewLodgeDTO {
 
     private String title;
+
+    private Boolean isAutoApproved;
+
+    private Integer hostId;
+
+    private String description;
 
     private Double basePrice;
 
