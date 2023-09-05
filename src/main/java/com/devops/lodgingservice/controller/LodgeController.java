@@ -1,7 +1,11 @@
 package com.devops.lodgingservice.controller;
 
+import com.devops.lodgingservice.dto.CalculatePriceDTO;
+import com.devops.lodgingservice.dto.CalculationResponseDTO;
 import com.devops.lodgingservice.dto.NewLodgeDTO;
 import com.devops.lodgingservice.model.Lodge;
+import com.devops.lodgingservice.model.PriceType;
+import com.devops.lodgingservice.service.CalculationService;
 import com.devops.lodgingservice.service.LodgeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +23,34 @@ public class LodgeController {
 
     private LodgeService lodgeService;
 
+    private CalculationService calculationService;
+
     @Autowired
-    public LodgeController(LodgeService lodgeService){
+    public LodgeController(LodgeService lodgeService, CalculationService calculationService){
         this.lodgeService = lodgeService;
+        this.calculationService = calculationService;
+    }
+
+    @PostMapping("/price")
+    public ResponseEntity<CalculationResponseDTO> calculatePriceForPeriod(@RequestBody CalculatePriceDTO dto){
+        Optional<Lodge> optional = lodgeService.getById(dto.getLodgeId());
+        if(optional.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Lodge lodge = optional.get();
+        if( lodge.getMinGuests() <= dto.getNumOfGuests()
+                && lodge.getMaxGuests() >= dto.getNumOfGuests()){
+
+            Double basePricePerDay = lodge.getPriceType().equals(PriceType.PER_LODGE) ? lodge.getBasePrice()
+                    : lodge.getBasePrice() * dto.getNumOfGuests();
+
+            CalculationResponseDTO response = calculationService.calcualtePriceForPeriod(dto, basePricePerDay);
+            if(response == null){
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping()
