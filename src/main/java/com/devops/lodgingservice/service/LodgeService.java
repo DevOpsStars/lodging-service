@@ -20,6 +20,10 @@ public class LodgeService {
         return lodgeRepository.findAll();
     }
 
+    public List<Lodge> getAllByHostId(Integer hostId) {
+        return lodgeRepository.findAllByHostId(hostId);
+    }
+
     public Optional<Lodge> getById(Integer id) {
         return lodgeRepository.findById(id);
     }
@@ -46,6 +50,9 @@ public class LodgeService {
     public Lodge convertNewLodgeDTOToLodge(NewLodgeDTO dto) {
         Lodge lodge = new Lodge();
         lodge.setTitle(dto.getTitle());
+        lodge.setIsAutoApproved(dto.getIsAutoApproved());
+        lodge.setHostId(dto.getHostId());
+        lodge.setDescription(dto.getDescription());
         lodge.setBasePrice(dto.getBasePrice());
         lodge.setPriceType(dto.getPriceType());
         lodge.setCountry(dto.getCountry());
@@ -61,5 +68,4 @@ public class LodgeService {
 
         return lodge;
     }
-
 }

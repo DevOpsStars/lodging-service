@@ -22,6 +22,15 @@ public class Lodge {
     @Column(name = "title")
     private String title;
 
+    @Column(name = "isAutoApproved")
+    private Boolean isAutoApproved;
+
+    @Column(name = "host_id")
+    private Integer hostId;
+
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "base_price")
     private Double basePrice;
 

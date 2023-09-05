@@ -36,6 +36,12 @@ public class LodgeController {
         return result.map(lodge -> new ResponseEntity<>(lodge, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping("/host/{hostId}")
+    public ResponseEntity<List<Lodge>> getByHostId(@PathVariable Integer hostId) {
+        List<Lodge> result = lodgeService.getAllByHostId(hostId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @PostMapping()
     public ResponseEntity<Lodge> create(@RequestBody NewLodgeDTO dto){
         Lodge result = lodgeService.createNew(dto);
