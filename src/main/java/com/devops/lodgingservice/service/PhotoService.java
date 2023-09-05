@@ -1,7 +1,9 @@
 package com.devops.lodgingservice.service;
 
 import com.devops.lodgingservice.dto.PhotoInfoDTO;
+import com.devops.lodgingservice.model.Lodge;
 import com.devops.lodgingservice.model.Photo;
+import com.devops.lodgingservice.repository.LodgeRepository;
 import com.devops.lodgingservice.repository.PhotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,10 +18,21 @@ public class PhotoService {
     @Autowired
     private PhotoRepository photoRepository;
 
-    public Photo savePhoto(Photo photo) throws NullPointerException {
-        if (photo == null)
+    @Autowired
+    private LodgeRepository lodgeRepository;
+
+    public Photo savePhoto(Photo photo, Integer lodgeId, String title) throws NullPointerException {
+        if (photo == null) {
             throw new NullPointerException("Image Data NULL");
-        return photoRepository.save(photo);
+        }
+        Optional<Lodge> optionalLodge = lodgeRepository.findById(lodgeId);
+
+        if(optionalLodge.isPresent() && !photoRepository.existsByTitleAndLodgeId(title, lodgeId)){
+            photo.setLodge(optionalLodge.get());
+            photo.setTitle(title);
+            return photoRepository.save(photo);
+        }
+        return null;
     }
 
     public Optional<Photo> findByTitle(String title) {
@@ -53,7 +66,7 @@ public class PhotoService {
         return false;
     }
 
-    public List<Photo> findByLodgeId(Integer lodgeId) {
-        return photoRepository.findByLodgeId(lodgeId);
+    public List<PhotoInfoDTO> findByLodgeId(Integer lodgeId) {
+        return photoRepository.findAllByLodgeId(lodgeId);
     }
 }
