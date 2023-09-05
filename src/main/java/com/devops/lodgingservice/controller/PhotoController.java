@@ -37,15 +37,20 @@ public class PhotoController {
         return new ResponseEntity<>(imageResponses, HttpStatus.OK);
     }
 
-    @PostMapping("/upload")
-    public PhotoInfoDTO uploadSinglePhoto(@RequestParam("file") MultipartFile file) {
-        try{
-            Photo photo = Photo.buildImage(file, imageUtils);
-            photoService.savePhoto(photo);
-            return new PhotoInfoDTO(photo);
-        }catch(Exception e){
-            return null;
+    @GetMapping("/{id}")
+    public ResponseEntity<PhotoInfoDTO> getPhotoInfoById(@PathVariable Integer id){
+        Optional<Photo> result = photoService.findById(id);
+        return result.map(photo -> new ResponseEntity<>(new PhotoInfoDTO(photo), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/lodge/{lodgeId}")
+    public ResponseEntity<List<PhotoInfoDTO>> getPhotoInfosByLodge(@PathVariable Integer lodgeId){
+        List<Photo> result = photoService.findByLodgeId(lodgeId);
+        List<PhotoInfoDTO> infos = new ArrayList<>();
+        for (Photo photo: result){
+            infos.add(new PhotoInfoDTO(photo));
         }
+        return new ResponseEntity<>(infos, HttpStatus.OK);
     }
 
     @PostMapping()
@@ -57,6 +62,15 @@ public class PhotoController {
         }catch(Exception e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable Integer id) {
+        Boolean result = photoService.deletePhoto(id);
+        if(result) {
+            return new ResponseEntity<>("Success", HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("/uploads")
@@ -82,8 +96,7 @@ public class PhotoController {
         Photo photo = getPhotoByName(fileName, width, height);
         return ResponseEntity.ok().contentType(MediaType.valueOf(photo.getFileType())).body(photo.getData());
     }
-
-
+    
     public Photo getPhotoByName(String name) throws Exception {
         Optional<Photo> optionalPhoto = photoService.findByFileName(name);
         if(optionalPhoto.isEmpty()){
