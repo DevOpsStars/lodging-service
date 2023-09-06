@@ -5,11 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class NewLodgeDTO {
-
+public class LodgeDTO {
+    private Integer id;
     private String title;
     private Boolean isAutoApproved;
     private Integer hostId;
@@ -26,4 +28,7 @@ public class NewLodgeDTO {
     private Boolean hasAC;
     private Boolean hasFreeParking;
     private Boolean hasBalcony;
+    private List<AvailabilityDTO> availabilities;
+
+    private List<PriceModificationDTO> priceModifications;
 }
