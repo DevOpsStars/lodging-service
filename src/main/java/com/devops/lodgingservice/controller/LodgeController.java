@@ -1,8 +1,6 @@
 package com.devops.lodgingservice.controller;
 
-import com.devops.lodgingservice.dto.CalculatePriceDTO;
-import com.devops.lodgingservice.dto.CalculationResponseDTO;
-import com.devops.lodgingservice.dto.NewLodgeDTO;
+import com.devops.lodgingservice.dto.*;
 import com.devops.lodgingservice.model.Lodge;
 import com.devops.lodgingservice.model.PriceType;
 import com.devops.lodgingservice.service.CalculationService;
@@ -53,40 +51,52 @@ public class LodgeController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
+    @PostMapping("/search")
+    public ResponseEntity<List<LodgeSearchResponseDTO>> searchLodges(@RequestBody LodgeSearchFilterDTO lodgeSearchFilterDTO) {
+        // Pretraziti loze po filteru nekako
+        List<LodgeSearchResponseDTO> foundLodges = lodgeService.getFilteredLodges(lodgeSearchFilterDTO);
+
+        return new ResponseEntity<>(foundLodges, HttpStatus.OK);
+        // TODO
+        // zatim za svaku pronadjenu lozu uraditi poziv calcServisu
+    }
+
     @GetMapping()
-    public ResponseEntity<List<Lodge>> getAll() {
+    public ResponseEntity<List<LodgeDTO>> getAll() {
         List<Lodge> result = lodgeService.getAll();
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        List<LodgeDTO> dtos = result.stream().map(l -> lodgeService.convertLodgeToLodgeDTO(l)).toList();
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Lodge> getById(@PathVariable Integer id) {
+    public ResponseEntity<LodgeDTO> getById(@PathVariable Integer id) {
         Optional<Lodge> result = lodgeService.getById(id);
-        return result.map(lodge -> new ResponseEntity<>(lodge, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return result.map(lodge -> new ResponseEntity<>(lodgeService.convertLodgeToLodgeDTO(result.get()), HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/host/{hostId}")
-    public ResponseEntity<List<Lodge>> getByHostId(@PathVariable Integer hostId) {
+    public ResponseEntity<List<LodgeDTO>> getByHostId(@PathVariable Integer hostId) {
         List<Lodge> result = lodgeService.getAllByHostId(hostId);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        List<LodgeDTO> dtos = result.stream().map(l -> lodgeService.convertLodgeToLodgeDTO(l)).toList();
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     @PostMapping()
-    public ResponseEntity<Lodge> create(@RequestBody NewLodgeDTO dto){
+    public ResponseEntity<LodgeDTO> create(@RequestBody NewLodgeDTO dto){
         Lodge result = lodgeService.createNew(dto);
         if(result != null){
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            return new ResponseEntity<>(lodgeService.convertLodgeToLodgeDTO(result), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<Lodge> update(@PathVariable Integer id, @RequestBody NewLodgeDTO dto) {
+    public ResponseEntity<LodgeDTO> update(@PathVariable Integer id, @RequestBody NewLodgeDTO dto) {
         Lodge lodge = lodgeService.convertNewLodgeDTOToLodge(dto);
         lodge.setId(id);
         Lodge result = lodgeService.updateLodge(lodge);
-
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(lodgeService.convertLodgeToLodgeDTO(result), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -97,6 +107,4 @@ public class LodgeController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
-
 }

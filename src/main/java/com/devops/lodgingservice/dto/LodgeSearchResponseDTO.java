@@ -8,11 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class NewLodgeDTO {
+public class LodgeSearchResponseDTO {
 
+    private Integer lodgeId;
     private String title;
-    private Boolean isAutoApproved;
-    private Integer hostId;
     private String description;
     private Double basePrice;
     private PriceType priceType;
@@ -21,9 +20,6 @@ public class NewLodgeDTO {
     private String address;
     private Integer minGuests;
     private Integer maxGuests;
-    private Boolean hasKitchen;
-    private Boolean hasWifi;
-    private Boolean hasAC;
-    private Boolean hasFreeParking;
-    private Boolean hasBalcony;
+
+    private CalculationResponseDTO result;
 }
