@@ -17,6 +17,7 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/api/availability")
 @Slf4j
+@CrossOrigin("*")
 public class AvailabilityController {
 
     private AvailabilityService availabilityService;

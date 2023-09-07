@@ -17,6 +17,7 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/api/lodge")
 @Slf4j
+@CrossOrigin("*")
 public class LodgeController {
 
     private LodgeService lodgeService;

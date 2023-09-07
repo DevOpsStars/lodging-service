@@ -19,6 +19,7 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/api/photo")
 @Slf4j
+@CrossOrigin("*")
 public class PhotoController {
 
     private PhotoService photoService;

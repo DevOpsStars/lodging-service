@@ -17,6 +17,7 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/api/price")
 @Slf4j
+@CrossOrigin("*")
 public class PriceModificationController {
 
     private PriceModificationService priceService;
