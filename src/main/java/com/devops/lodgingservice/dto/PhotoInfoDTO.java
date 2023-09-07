@@ -12,17 +12,11 @@ import lombok.NoArgsConstructor;
 public class PhotoInfoDTO {
 
     private Integer id;
-
     private String uuid;
-
     private String title;
-
     private Integer lodgeId;
-
     private String fileName;
-
     private String fileType;
-
     private long size;
 
     public PhotoInfoDTO(Photo photo) {

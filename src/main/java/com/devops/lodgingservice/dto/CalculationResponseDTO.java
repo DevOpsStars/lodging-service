@@ -12,7 +12,6 @@ import java.util.List;
 public class CalculationResponseDTO {
 
     private List<PriceByDayDTO> pricesByDay;
-
     private Double totalPrice;
 }
 

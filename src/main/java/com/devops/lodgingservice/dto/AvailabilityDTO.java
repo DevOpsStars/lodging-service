@@ -12,8 +12,6 @@ import java.time.LocalDate;
 public class AvailabilityDTO {
 
     private Integer id;
-
     private Integer lodgeId;
-
     private LocalDate start, end;
 }

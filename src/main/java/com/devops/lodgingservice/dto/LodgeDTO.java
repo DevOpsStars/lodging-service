@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class LodgeDTO {
+
     private Integer id;
     private String title;
     private Boolean isAutoApproved;

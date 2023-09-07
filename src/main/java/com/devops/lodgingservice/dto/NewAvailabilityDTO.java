@@ -13,8 +13,6 @@ import java.time.LocalDate;
 public class NewAvailabilityDTO {
 
     private Integer lodgeId;
-
     private String start;
-
     private String end;
 }
