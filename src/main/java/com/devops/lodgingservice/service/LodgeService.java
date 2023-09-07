@@ -1,17 +1,11 @@
 package com.devops.lodgingservice.service;
 
-import com.devops.lodgingservice.dto.LodgeDTO;
-import com.devops.lodgingservice.dto.LodgeSearchFilterDTO;
-import com.devops.lodgingservice.dto.LodgeSearchResponseDTO;
-import com.devops.lodgingservice.dto.NewLodgeDTO;
+import com.devops.lodgingservice.dto.*;
 import com.devops.lodgingservice.model.Lodge;
+import com.devops.lodgingservice.model.PriceType;
 import com.devops.lodgingservice.repository.LodgeRepository;
 import com.devops.lodgingservice.repository.specifications.LodgeSpecification;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,6 +24,9 @@ public class LodgeService {
     @Autowired
     private PriceModificationService priceModificationService;
 
+    @Autowired
+    private CalculationService calculationService;
+
     public List<Lodge> getAll() {
         return lodgeRepository.findAll();
     }
@@ -43,6 +40,9 @@ public class LodgeService {
     }
 
     public Lodge createNew(NewLodgeDTO dto) {
+        if(lodgeRepository.existsByTitleAndHostId(dto.getTitle(), dto.getHostId())){
+            return null;
+        }
         Lodge newLodge = convertNewLodgeDTOToLodge(dto);
         return lodgeRepository.save(newLodge);
     }
@@ -113,12 +113,10 @@ public class LodgeService {
         }
         return dto;
     }
-    public List<LodgeSearchResponseDTO> getFilteredLodges(LodgeSearchFilterDTO lodgeSearchFilterDTO) {
-        Pageable pageable = PageRequest.of(lodgeSearchFilterDTO.getPage(), lodgeSearchFilterDTO.getPageSize());
+    public List<LodgeSearchResponseDTO> getFilteredLodges(LodgeSearchFilterDTO filterDTO) {
+        List<Lodge> responses = lodgeRepository.findAll(LodgeSpecification.getFilteredLodges(filterDTO));
 
-        Page<Lodge> responses = lodgeRepository.findAll(LodgeSpecification.getFilteredLodges(lodgeSearchFilterDTO), pageable);
-
-        Page<LodgeSearchResponseDTO> responsesDto = responses.map(lodge ->
+        List<LodgeSearchResponseDTO> responsesDto = responses.stream().map(lodge ->
                 new LodgeSearchResponseDTO(lodge.getId(),
                         lodge.getTitle(),
                         lodge.getDescription(),
@@ -129,17 +127,23 @@ public class LodgeService {
                         lodge.getAddress(),
                         lodge.getMinGuests(),
                         lodge.getMaxGuests(),
-                        null));
-        return responsesDto.getContent();
+                        null)).toList();
 
+        if(filterDTO.getStartDate() != null && !filterDTO.getStartDate().equals("")
+                && filterDTO.getEndDate() != null && !filterDTO.getEndDate().equals("")){
 
+            for(LodgeSearchResponseDTO dto : responsesDto){
+                CalculatePriceDTO calcDTO = new CalculatePriceDTO(dto.getLodgeId(), filterDTO.getNumOfGuests(),
+                        filterDTO.getStartDate(), filterDTO.getEndDate());
+
+                Double basePricePerDay = dto.getPriceType().equals(PriceType.PER_LODGE) ? dto.getBasePrice()
+                        : dto.getBasePrice() * filterDTO.getNumOfGuests();
+
+                dto.setResult(calculationService.calcualtePriceForPeriod(calcDTO, basePricePerDay));
+            }
+        }
+        return responsesDto;
     }
-//    public List<HistoryResponseDto> getFilteredHistory(HistoryFilterDto historyFilterDto) {
-//        Pageable pageable = PageRequest.of(historyFilterDto.getPage(), historyFilterDto.getPageSize());
-//        Page<PaymentResponse> responses = paymentResponseRepository.findAll(PaymentResponseSpecification.getFilteredResponses(historyFilterDto), pageable);
-//        Page<HistoryResponseDto> responsesDto = responses.map(paymentResponse -> new HistoryResponseDto(historyFilterDto.getServiceName(), paymentResponse.getTransactionStatus().name(), paymentResponse.getPaymentRequest().getAmount(), paymentResponse.getPaymentRequest().getMerchantTimestamp()));
-//        return responsesDto.getContent();
-//    }
 }
 
 

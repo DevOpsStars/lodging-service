@@ -26,7 +26,6 @@ public class AvailabilityController {
         this.availabilityService = availabilityService;
     }
 
-
     @GetMapping()
     public ResponseEntity<List<AvailabilityDTO>> getAll() {
         List<Availability> result = availabilityService.getAll();

@@ -14,32 +14,31 @@ import java.util.List;
 public class LodgeSpecification {
     public static Specification<Lodge> getFilteredLodges(LodgeSearchFilterDTO filterDTO) {
         return (root, criteriaQuery, criteriaBuilder) -> {
-            Join<Lodge, Availability> lodgeAvailabilityJoin = root.join("lodge");
+            Join<Availability, Lodge> availabilityLodgeJoin = root.join("availabilities");
 
             List<Predicate> predicates = new ArrayList<>();
-
             if(filterDTO.getCountry() != null && !filterDTO.getCountry().equals("")){
-                predicates.add(criteriaBuilder.like(root.get("country"), '%' + filterDTO.getCountry() + '%'));
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("country")),'%' + filterDTO.getCountry().toLowerCase() + '%'));
             }
 
             if(filterDTO.getCity() != null && !filterDTO.getCity().equals("")){
-                predicates.add(criteriaBuilder.like(root.get("city"), '%' + filterDTO.getCity() + '%'));
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("city")), '%' + filterDTO.getCity().toLowerCase() + '%'));
             }
 
             if(filterDTO.getAddress() != null && !filterDTO.getAddress().equals("")){
-                predicates.add(criteriaBuilder.like(root.get("address"), '%' + filterDTO.getAddress() + '%'));
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("address")), '%' + filterDTO.getAddress().toLowerCase() + '%'));
             }
 
             if(filterDTO.getNumOfGuests() != null && !filterDTO.getNumOfGuests().equals(0)){
-                Predicate predicateGuestNumMin = criteriaBuilder.greaterThan(root.get("minGuests"), filterDTO.getNumOfGuests());
-                Predicate predicateGuestNumMax = criteriaBuilder.lessThan(root.get("maxGuests"), filterDTO.getNumOfGuests());
-                predicates.add(criteriaBuilder.and(predicateGuestNumMin, predicateGuestNumMax));
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("minGuests"), filterDTO.getNumOfGuests()));
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("maxGuests"), filterDTO.getNumOfGuests()));
             }
 
-            if(filterDTO.getStartDate() != null && !filterDTO.getStartDate().equals("")){
+            if((filterDTO.getStartDate() != null && !filterDTO.getStartDate().equals(""))){
                 try{
                     LocalDate start = LocalDate.parse(filterDTO.getStartDate());
-                    predicates.add(criteriaBuilder.greaterThanOrEqualTo(lodgeAvailabilityJoin.get("startDate"), start));
+                    predicates.add(criteriaBuilder.lessThanOrEqualTo(availabilityLodgeJoin.get("startDate"), start));
+                    predicates.add(criteriaBuilder.greaterThanOrEqualTo(availabilityLodgeJoin.get("endDate"), start));
                 }
                 catch(Exception e){
                     System.out.println("No start date after all");
@@ -49,7 +48,8 @@ public class LodgeSpecification {
             if(filterDTO.getEndDate() != null && !filterDTO.getEndDate().equals("")){
                 try{
                     LocalDate end = LocalDate.parse(filterDTO.getEndDate());
-                    predicates.add(criteriaBuilder.lessThanOrEqualTo(lodgeAvailabilityJoin.get("endDate"), end));
+                    predicates.add(criteriaBuilder.lessThanOrEqualTo(availabilityLodgeJoin.get("startDate"), end));
+                    predicates.add(criteriaBuilder.greaterThanOrEqualTo(availabilityLodgeJoin.get("endDate"), end));
                 }
                 catch(Exception e){
                     System.out.println("No end date after all");
