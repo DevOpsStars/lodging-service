@@ -13,16 +13,10 @@ import java.time.LocalDate;
 public class PriceModificationDTO {
 
     private Integer id;
-
     private String title;
-
     private Integer lodgeId;
-
     private LocalDate start;
-
     private LocalDate end;
-
     private ModificationType modificationType;
-
     private Integer percentage;
 }

@@ -12,8 +12,6 @@ import java.time.LocalDate;
 public class PriceByDayDTO {
 
     private Integer lodgeId;
-
     private LocalDate date;
-
     private Double price;
 }

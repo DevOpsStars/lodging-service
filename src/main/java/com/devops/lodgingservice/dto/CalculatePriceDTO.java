@@ -10,10 +10,7 @@ import lombok.NoArgsConstructor;
 public class CalculatePriceDTO {
 
     private Integer lodgeId;
-
     private Integer numOfGuests;
-
     private String start;
-
     private String end;
 }

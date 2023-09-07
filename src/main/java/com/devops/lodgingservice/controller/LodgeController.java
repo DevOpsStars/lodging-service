@@ -53,12 +53,8 @@ public class LodgeController {
 
     @PostMapping("/search")
     public ResponseEntity<List<LodgeSearchResponseDTO>> searchLodges(@RequestBody LodgeSearchFilterDTO lodgeSearchFilterDTO) {
-        // Pretraziti loze po filteru nekako
         List<LodgeSearchResponseDTO> foundLodges = lodgeService.getFilteredLodges(lodgeSearchFilterDTO);
-
         return new ResponseEntity<>(foundLodges, HttpStatus.OK);
-        // TODO
-        // zatim za svaku pronadjenu lozu uraditi poziv calcServisu
     }
 
     @GetMapping()

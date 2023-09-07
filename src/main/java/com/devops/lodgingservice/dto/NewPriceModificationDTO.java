@@ -11,14 +11,9 @@ import lombok.NoArgsConstructor;
 public class NewPriceModificationDTO {
 
     private Integer lodgeId;
-
     private String title;
-
     private String start;
-
     private String end;
-
     private ModificationType modificationType;
-
     private Integer percentage;
 }
