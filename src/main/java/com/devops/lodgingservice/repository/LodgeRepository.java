@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface LodgeRepository extends JpaRepository<Lodge, Integer>, JpaSpecificationExecutor<Lodge> {
     List<Lodge> findAllByHostId(Integer hostId);
+
+    boolean existsByTitleAndHostId(String title, Integer hostId);
 }
