@@ -20,6 +20,11 @@ public class LodgeSearchResponseDTO {
     private String address;
     private Integer minGuests;
     private Integer maxGuests;
+    private Boolean hasKitchen;
+    private Boolean hasWifi;
+    private Boolean hasAC;
+    private Boolean hasFreeParking;
+    private Boolean hasBalcony;
 
     private CalculationResponseDTO result;
 }
