@@ -15,7 +15,4 @@ public class LodgeSearchFilterDTO {
     private Integer numOfGuests;
     private String startDate;
     private String endDate;
-
-    private int page;
-    private int pageSize;
 }

@@ -127,6 +127,11 @@ public class LodgeService {
                         lodge.getAddress(),
                         lodge.getMinGuests(),
                         lodge.getMaxGuests(),
+                        lodge.getHasKitchen(),
+                        lodge.getHasWifi(),
+                        lodge.getHasAC(),
+                        lodge.getHasFreeParking(),
+                        lodge.getHasBalcony(),
                         null)).toList();
 
         if(filterDTO.getStartDate() != null && !filterDTO.getStartDate().equals("")
