@@ -12,6 +12,8 @@ public class LodgeSearchResponseDTO {
 
     private Integer lodgeId;
     private String title;
+    private Boolean isAutoApproved;
+    private Integer hostId;
     private String description;
     private Double basePrice;
     private PriceType priceType;

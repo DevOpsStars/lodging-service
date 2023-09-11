@@ -119,6 +119,8 @@ public class LodgeService {
         List<LodgeSearchResponseDTO> responsesDto = responses.stream().map(lodge ->
                 new LodgeSearchResponseDTO(lodge.getId(),
                         lodge.getTitle(),
+                        lodge.getIsAutoApproved(),
+                        lodge.getHostId(),
                         lodge.getDescription(),
                         lodge.getBasePrice(),
                         lodge.getPriceType(),
